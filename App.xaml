@@ -1,0 +1,62 @@
+<Application x:Class="UniquenessChecker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Views/LoginWindow.xaml">
+    <Application.Resources>
+        <!-- Цвет акцента -->
+        <SolidColorBrush x:Key="AccentBrush"      Color="#2E74B5"/>
+        <SolidColorBrush x:Key="AccentDarkBrush"  Color="#1F5287"/>
+        <SolidColorBrush x:Key="GreenBrush"       Color="#27AE60"/>
+        <SolidColorBrush x:Key="YellowBrush"      Color="#F39C12"/>
+        <SolidColorBrush x:Key="RedBrush"         Color="#E74C3C"/>
+        <SolidColorBrush x:Key="LightBgBrush"     Color="#F5F9FD"/>
+
+        <!-- Стиль кнопки -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background"   Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground"   Value="White"/>
+            <Setter Property="Padding"      Value="16,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentDarkBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="{StaticResource RedBrush}"/>
+        </Style>
+
+        <!-- Стиль заголовка секции -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize"     Value="18"/>
+            <Setter Property="FontWeight"   Value="SemiBold"/>
+            <Setter Property="Foreground"   Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Margin"       Value="0,0,0,12"/>
+        </Style>
+
+        <!-- Стиль поля ввода -->
+        <Style x:Key="InputField" TargetType="TextBox">
+            <Setter Property="Padding"        Value="8,6"/>
+            <Setter Property="FontSize"       Value="14"/>
+            <Setter Property="BorderBrush"    Value="#CCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Application.Resources>
+</Application>

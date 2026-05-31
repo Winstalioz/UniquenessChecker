@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>UniquenessChecker</AssemblyName>
+    <RootNamespace>UniquenessChecker</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- BCrypt для хеширования паролей -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- ADO.NET — встроен в .NET Framework, дополнительные пакеты не нужны -->
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+</Project>

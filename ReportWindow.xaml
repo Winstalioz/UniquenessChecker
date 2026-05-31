@@ -1,0 +1,100 @@
+<Window x:Class="UniquenessChecker.Views.ReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отчёт о проверке — УникДос"
+        Height="620" Width="780"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource LightBgBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32">
+
+        <!-- Заголовок -->
+        <TextBlock x:Name="TitleText" Text="Отчёт о проверке уникальности"
+                   Style="{StaticResource SectionHeader}" FontSize="22"/>
+
+        <!-- Карточка документа -->
+        <Border Background="White" BorderBrush="#DDD" BorderThickness="1"
+                CornerRadius="8" Padding="20" Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="140"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock x:Name="FileNameText"  FontSize="16" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="AuthorText"    FontSize="13" Foreground="#555" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="DateText"      FontSize="13" Foreground="#555"/>
+                </StackPanel>
+                <!-- Круглый индикатор уникальности -->
+                <Border Grid.Column="1" Width="120" Height="120"
+                        CornerRadius="60" HorizontalAlignment="Center"
+                        x:Name="UniqCircle">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock x:Name="UniqPercent" FontSize="28" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Foreground="White"/>
+                        <TextBlock Text="уникальность" FontSize="10" Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Источники заимствований -->
+        <TextBlock Text="Найденные заимствования" FontWeight="SemiBold"
+                   FontSize="15" Margin="0,0,0,8"/>
+        <DataGrid x:Name="SourcesGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                  BorderBrush="#DDD" BorderThickness="1" Background="White"
+                  RowBackground="White" AlternatingRowBackground="#FFF5F5"
+                  GridLinesVisibility="Horizontal" MaxHeight="180" Margin="0,0,0,20">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Источник"    Binding="{Binding SourceName}"        Width="*"/>
+                <DataGridTextColumn Header="URL"         Binding="{Binding SourceUrl}"         Width="200"/>
+                <DataGridTextColumn Header="Заимствовано" Binding="{Binding BorrowingDisplay}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Комментарии -->
+        <TextBlock Text="Комментарии преподавателя" FontWeight="SemiBold"
+                   FontSize="15" Margin="0,0,0,8"/>
+        <ItemsControl x:Name="CommentsPanel" Margin="0,0,0,16">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#FFFDE7" BorderBrush="#F9A825" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="{Binding CommentedBy}" FontWeight="SemiBold"
+                                       FontSize="12" Foreground="#777"/>
+                            <TextBlock Text="{Binding Fragment}" FontStyle="Italic"
+                                       Foreground="#555" FontSize="12" Margin="0,4,0,4"/>
+                            <TextBlock Text="{Binding Body}" FontSize="13" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Форма добавления комментария (для преподавателя) -->
+        <Border x:Name="CommentForm" Visibility="Collapsed"
+                Background="White" BorderBrush="#DDD" BorderThickness="1"
+                CornerRadius="6" Padding="16" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Добавить комментарий" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                <TextBox x:Name="FragmentBox" Style="{StaticResource InputField}"
+                         Margin="0,0,0,8" Text="Цитата фрагмента (необязательно)"/>
+                <TextBox x:Name="CommentBox"  Style="{StaticResource InputField}"
+                         Height="70" TextWrapping="Wrap" AcceptsReturn="True"
+                         Margin="0,0,0,8" Text="Текст комментария..."/>
+                <Button Content="Сохранить комментарий" Style="{StaticResource PrimaryButton}"
+                        HorizontalAlignment="Left" Click="OnSaveComment"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Кнопки -->
+        <StackPanel Orientation="Horizontal">
+            <Button Content="✕  Закрыть" Style="{StaticResource PrimaryButton}"
+                    Background="#777" Margin="0,0,8,0" Click="OnClose"/>
+        </StackPanel>
+
+    </StackPanel>
+    </ScrollViewer>
+</Window>

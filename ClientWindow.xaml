@@ -1,0 +1,175 @@
+<Window x:Class="UniquenessChecker.Views.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="УникДос — Личный кабинет"
+        Height="640" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource LightBgBrush}">
+    <Window.Resources>
+        <Style x:Key="NavBtn" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="16,11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#1F5287"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Боковая панель -->
+        <Border Grid.Column="0" Background="#2E74B5">
+            <StackPanel Margin="0,20,0,0">
+                <TextBlock Text="🔍 УникДос" FontSize="16" FontWeight="Bold"
+                           Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                <TextBlock x:Name="UserNameText" FontSize="10" Foreground="#BDD7EE"
+                           HorizontalAlignment="Center" TextAlignment="Center"
+                           Margin="8,0,8,24" TextWrapping="Wrap"/>
+
+                <Button Content="📂  Мои документы" Tag="docs"
+                        Style="{StaticResource NavBtn}" Click="OnNavClick"/>
+                <Button Content="⬆  Загрузить работу" Tag="upload"
+                        Style="{StaticResource NavBtn}" Click="OnNavClick"/>
+                <!-- Только для преподавателя -->
+                <Button x:Name="BtnStudentWorks" Content="👥  Работы студентов"
+                        Tag="studentworks" Style="{StaticResource NavBtn}"
+                        Click="OnNavClick" Visibility="Collapsed"/>
+
+                <Button Content="🚪  Выход" Margin="12,40,12,0"
+                        Background="#1F5287" Foreground="White"
+                        BorderThickness="0" Padding="10,8" Cursor="Hand"
+                        Click="OnLogout"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Контент -->
+        <Grid Grid.Column="1" Margin="24">
+
+            <!-- Мои документы -->
+            <StackPanel x:Name="PanelDocs" Visibility="Visible">
+                <TextBlock Text="Мои документы" Style="{StaticResource SectionHeader}"/>
+                <DataGrid x:Name="MyDocsGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                          BorderBrush="#DDD" BorderThickness="1" Background="White"
+                          RowBackground="White" AlternatingRowBackground="#F9FBFF"
+                          GridLinesVisibility="Horizontal" Height="500">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Файл"         Binding="{Binding FileName}"          Width="220"/>
+                        <DataGridTextColumn Header="Размер, КБ"   Binding="{Binding FileSizeKb}"        Width="90"/>
+                        <DataGridTextColumn Header="Дата загрузки" Binding="{Binding UploadDate, StringFormat=dd.MM.yyyy HH:mm}" Width="150"/>
+                        <DataGridTextColumn Header="Уникальность" Binding="{Binding UniquenessDisplay}" Width="110"/>
+                        <DataGridTextColumn Header="Статус"       Binding="{Binding StatusDisplay}"     Width="110"/>
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Посмотреть отчёт"
+                                            Style="{StaticResource PrimaryButton}"
+                                            Padding="8,4" Click="OnViewMyReport"
+                                            Tag="{Binding DocumentId}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <!-- Загрузка -->
+            <StackPanel x:Name="PanelUpload" Visibility="Collapsed">
+                <TextBlock Text="Загрузить работу на проверку" Style="{StaticResource SectionHeader}"/>
+
+                <Border Background="White" BorderBrush="#DDD" BorderThickness="1"
+                        CornerRadius="8" Padding="28" Margin="0,0,0,20" MaxWidth="560">
+                    <StackPanel>
+                        <TextBlock Text="Выберите файл (.docx, .pdf, .txt, .doc)"
+                                   FontSize="13" Foreground="#555" Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" x:Name="FilePathBox"
+                                     Style="{StaticResource InputField}"
+                                     IsReadOnly="True" Margin="0,0,8,0"
+                                     Text="Файл не выбран"/>
+                            <Button Grid.Column="1" Content="Обзор..."
+                                    Style="{StaticResource PrimaryButton}"
+                                    Click="OnBrowseFile"/>
+                        </Grid>
+
+                        <!-- Индикатор прогресса -->
+                        <ProgressBar x:Name="UploadProgress" Height="8" Margin="0,0,0,12"
+                                     Visibility="Collapsed" IsIndeterminate="True"
+                                     Foreground="{StaticResource AccentBrush}"/>
+
+                        <Button Content="⬆  Загрузить и проверить"
+                                Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Left" Padding="20,10"
+                                Click="OnUploadFile"/>
+
+                        <TextBlock x:Name="UploadStatus" Margin="0,12,0,0"
+                                   FontSize="13" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Справка -->
+                <Border Background="#EAF4FB" BorderBrush="#B3D4F0" BorderThickness="1"
+                        CornerRadius="6" Padding="16" MaxWidth="560">
+                    <StackPanel>
+                        <TextBlock Text="ℹ  Как работает проверка?" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBrush}" Margin="0,0,0,8"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#444"
+                                   Text="1. Выберите файл в формате .docx, .pdf или .txt&#10;2. Нажмите «Загрузить и проверить»&#10;3. Система извлечёт текст и сравнит его с базой данных и источниками&#10;4. Вы получите отчёт с процентом уникальности и списком совпадений"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Работы студентов (только преподаватель) -->
+            <StackPanel x:Name="PanelStudentWorks" Visibility="Collapsed">
+                <TextBlock Text="Работы студентов" Style="{StaticResource SectionHeader}"/>
+                <DataGrid x:Name="StudentWorksGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                          BorderBrush="#DDD" BorderThickness="1" Background="White"
+                          RowBackground="White" AlternatingRowBackground="#F9FBFF"
+                          GridLinesVisibility="Horizontal" Height="500">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Файл"         Binding="{Binding FileName}"          Width="200"/>
+                        <DataGridTextColumn Header="Автор"        Binding="{Binding AuthorName}"        Width="180"/>
+                        <DataGridTextColumn Header="Дата"         Binding="{Binding UploadDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                        <DataGridTextColumn Header="Уникальность" Binding="{Binding UniquenessDisplay}" Width="110"/>
+                        <DataGridTextColumn Header="Статус"       Binding="{Binding StatusDisplay}"     Width="100"/>
+                        <DataGridTemplateColumn Header="" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Отчёт + комментарий"
+                                            Style="{StaticResource PrimaryButton}"
+                                            Padding="8,4" Click="OnViewMyReport"
+                                            Tag="{Binding DocumentId}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+
+</Window>
